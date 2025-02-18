@@ -21,14 +21,28 @@ app.use(fileUpload());
 //     credentials: true,
 //   }));
 
-app.use(cors({
-    origin: '*',  // Allow all origins
-    methods: 'GET, POST, PUT, DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true
-  }));
+// app.use(cors({
+//     origin: '*',  // Allow all origins
+//     methods: 'GET, POST, PUT, DELETE',
+//     allowedHeaders: 'Content-Type, Authorization',
+//     credentials: true
+//   }));
 
 // app.use(cors())
+
+app.use(cors({
+  origin: function (origin, callback) {
+    const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.34'];  // Add more trusted origins if needed
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: 'GET, POST, PUT, DELETE',
+  allowedHeaders: 'Content-Type, Authorization',
+  credentials: true
+}));
 
   const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -47,7 +61,6 @@ mongoose.connect(process.env.CONNECTION_STRING, {
 
 app.use('/', route);
 
-const ip = '0.0.0.0'
-app.listen(process.env.PORT || 3000, ip, function () {
+app.listen(process.env.PORT || 3000, function () {
     console.log('Express app running on port ' + (process.env.PORT||3000));
 });
