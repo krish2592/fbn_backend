@@ -11,7 +11,7 @@ import rateLimit from 'express-rate-limit';
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload());
-//https://infytechai.com
+
 
 // Enable CORS middleware
 // app.use(cors({
