@@ -13,5 +13,9 @@ router.post(`/status/:txnId`, getPaymentStatus);
 
 router.get('/authorize/client')
 
+router.get('/*', (req, res)=>{
+    res.send("Welcome!")
+})
+
 export default router;
 //*******************************************************************//
