@@ -61,6 +61,7 @@ app.use(limiter);
 
 
 mongoose.connect(process.env.CONNECTION_STRING, {
+    dbName: "fbn001",
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected"))

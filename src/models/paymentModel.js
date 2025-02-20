@@ -5,6 +5,7 @@ const paymentSchema = new mongoose.Schema(
     {
         userId: {
             type: String,
+            required: true,
         },
         razorpayPaymentId:{
             type: String,
@@ -32,6 +33,10 @@ const paymentSchema = new mongoose.Schema(
         },
         phone: {
             type: String
+        },
+        ticketStatus: {
+            type: String,
+            default: "Pending"
         },
         status: {
             type: String,
