@@ -62,7 +62,8 @@ app.use(limiter);
 
 mongoose.connect(process.env.CONNECTION_STRING, {
     dbName: "fbn001",
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    // serverSelectionTimeoutMS: 30000
 })
 .then( () => console.log("MongoDb is connected"))
 .catch ( err => console.log(err) );
