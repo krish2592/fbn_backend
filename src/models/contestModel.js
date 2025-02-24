@@ -27,11 +27,11 @@ const contestModel = new mongoose.Schema(
             type: String,
             required: true
         },
-        initialPoolPrice: {
+        initialPoolPrize: {
             type: String,
             required: true
         },
-        targetPoolPrice: {
+        targetPoolPrize: {
             type: String,
             required: true
         },

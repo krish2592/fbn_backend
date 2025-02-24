@@ -32,7 +32,7 @@ app.use(fileUpload());
 
 // app.use(cors({
 //   origin: function (origin, callback) {
-//     const allowedOrigins = ['http://localhost:3000', 'http://192.168.1.34'];  // Add more trusted origins if needed
+//     const allowedOrigins = ['http://localhost:3000','http://192.168.1.34', 'http://192.168.1.37', 'http://192.168.32.236'];  // Add more trusted origins if needed
 //     if (allowedOrigins.includes(origin) || !origin) {
 //       callback(null, true);
 //     } else {
