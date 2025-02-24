@@ -189,6 +189,6 @@ export const getAllContest = async(req, res) => {
         console.log(result);
         res.send({success: true, message:"Contest data fetched sucess", data:result})
     } catch(err) {
-        console.error("Finding Contest Error:", err);
+        console.error("Finding Contest Error: ", err);
     }
 }
