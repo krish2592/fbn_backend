@@ -67,6 +67,7 @@ export const createTicket = async (req, res) => {
         razorpayPaymentId, 
         contestName, 
         amount,
+        poolPrize,
         quantity, 
         pricePerQuantity
         } = req.body;
@@ -88,7 +89,8 @@ export const createTicket = async (req, res) => {
         payload["ticketId"] = tickets[i];
         payload["contestName"] = contestName;
         payload["salePrice"] = pricePerQuantity;
-        payload["resalePrice"] = "NA";
+        payload["resalePrice"] = 2*pricePerQuantity;
+        payload["poolPrize"] = poolPrize
         reqPayload.push(payload)
     }
         console.log("ggg", reqPayload);

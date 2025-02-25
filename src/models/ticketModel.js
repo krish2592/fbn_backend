@@ -27,6 +27,10 @@ const ticketSchema = new mongoose.Schema(
             type: String,
             default: "NA"
         },
+        poolPrize: {
+            type: String,
+            required: true,
+        },
         createdAt: {
             type: Date,
             default: Date.now,
