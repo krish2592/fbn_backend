@@ -20,6 +20,10 @@ const paymentSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        poolPrize: {
+            type: String,
+            required: true,
+        },
         quantity: {
             type: String,
             required: true,

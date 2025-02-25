@@ -77,7 +77,7 @@ export const createTicket = async (req, res) => {
         tickets.push(generateTicketId());
     }
 
-    console.log(tickets);
+    // console.log(tickets);
 
    const reqPayload = []
    
@@ -95,9 +95,30 @@ export const createTicket = async (req, res) => {
         // const ticket = new Ticket(reqPayload)
         try {
             const result = await Ticket.insertMany(reqPayload)
-            console.log("Bulk insert successful:", result);
+            // console.log("Bulk insert successful:", result);
         } catch(err) {
             console.error("Bulk insert failed:", err);
         } 
     
+}
+
+
+
+export const getMyContest = async (req, res) => {
+    try {
+
+        console.log("Get my contest start")
+        const userId = "1114bf9b-7cf0-4222-9577-b6b2f281d462"
+
+        const result = await Ticket.find({userId: userId, isDeleted: false })
+            .sort({ createdAt: -1 })
+            .select({ _id: 0, paymentId:0, updatedAt: 0, __v: 0, isDeleted: 0 })
+
+        console.log(result);
+        
+        res.send({ success: true, message: "Contest Ticket Fetched Success!", data: result })
+
+    } catch (err) {
+        console.error("Finding Contest Error: ", err);
+    }
 }

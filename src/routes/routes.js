@@ -2,7 +2,7 @@ import express from 'express';
 const router = express();
 import UserController from "../controllers/userController.js";
 import {savePayment, getPaymentStatus} from "../controllers/paymentController.js";
-import {createTicket} from "../controllers/ticketController.js";
+import {createTicket, getMyContest} from "../controllers/ticketController.js";
 import { createContest, getAllContest } from '../controllers/contestController.js';
 
 import {authorizePeClient} from "../controllers/auth/auth.js"
@@ -15,6 +15,7 @@ router.get('/get-user', UserController.getUser)
 /*********************** Contest ***********************************/
 router.post('/create-contest', createContest)
 router.get('/get-all-contest', getAllContest)
+router.get('/get-my-contest', getMyContest)
 
 /************************ Payment **********************************/
 router.post('/save-payment', savePayment)
