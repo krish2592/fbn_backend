@@ -4,7 +4,7 @@ import Payment from '../models/paymentModel.js';
 export const savePayment = async (req, res) => {
     try {
        const {userId, razorpayPaymentId, contestName, 
-        amount,quantity, pricePerQuantity, email, number, status, description} = req.body;
+        amount,quantity, pricePerQuantity, poolPrize, email, number, status, description} = req.body;
 
         const payment = new Payment({
             userId,
@@ -13,6 +13,7 @@ export const savePayment = async (req, res) => {
             amount,
             quantity,
             pricePerQuantity,
+            poolPrize,
             email,
             phone: number,
             status,
