@@ -15,14 +15,17 @@ const userSchema = new mongoose.Schema(
         },
         firstName: {
             type: String,
+            // Do lower case
         },
         lastName: {
             type: String,
+            // Do lower case
         },
         email: {
             type: String,
             unique: true,
             sparse: true, // Allows unique index for cases where email is optional
+            // Do lower case
         },
         profilePicture: {
             type: String, // URL to the profile picture

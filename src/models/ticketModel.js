@@ -31,6 +31,22 @@ const ticketSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        isActiveBuy: {
+            type: Boolean,
+            default: false
+        },
+        isActiveSell: {
+            type: Boolean,
+            default: false
+        },
+        onSell: {
+            type:Boolean,
+            default: false
+        },
+        paymentType: {
+            type: String,
+            default: "complete"
+        },
         createdAt: {
             type: Date,
             default: Date.now,

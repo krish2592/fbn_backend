@@ -1,50 +1,39 @@
 // models/User.js
 import mongoose from "mongoose";
 
-const contestModel = new mongoose.Schema(
+const ticketSchema = new mongoose.Schema(
     {
-        contestName: {
+        ticketId: {
             type: String,
             required: true,
         },
-        contestId: {
+        transferee: {
+            type: String,
+            required: true
+        },
+        newpaymentId:{
             type: String,
             required: true,
         },
-        totalQuantity: {
-            type: Number,
-            required: true,
-        },
-        quantitySold: {
-            type: Number,
-            default: 0
-        },
-        initialPrice: {
+        transferor:{
             type: String,
             required: true
         },
-        todayPrice: {
+        transferAmount: {
             type: String,
             required: true
         },
-        initialPoolPrize: {
+        isTransfer: {
+            type: Boolean,
+            default: false
+        },
+        isAmountTransfered: {
+            type: Boolean,
+            default: false
+        },
+        oldPaymentId: {
             type: String,
             required: true
-        },
-        targetPoolPrize: {
-            type: String,
-            required: true
-        },
-        startDate: {
-            type: String,
-            required: true
-        },
-        maxDuration: {
-            type: String,
-            required: true
-        },
-        contestType: {
-            type: String
         },
         createdAt: {
             type: Date,
@@ -61,6 +50,6 @@ const contestModel = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Contest = mongoose.model("Contest", contestModel);
+const Transfer = mongoose.model("Transfer", ticketSchema);
 
-export default Contest;
+export default Transfer;

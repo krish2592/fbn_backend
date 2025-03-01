@@ -3,10 +3,10 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import route from './routes/routes.js';
 const app = express();
-import mongoose  from 'mongoose';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-
+import { WebSocketServer } from "ws";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -51,25 +51,52 @@ app.use(
   })
 );
 
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per window
-    message: 'Too many requests, please try again later.'
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  message: 'Too many requests, please try again later.'
 });
 
 app.use(limiter);
+const PORT = 8080;
+
+const wss = new WebSocketServer({ port: PORT });
 
 
 mongoose.connect(process.env.CONNECTION_STRING, {
-    dbName: "fbn001",
-    useNewUrlParser: true,
-    // serverSelectionTimeoutMS: 30000
+  dbName: "fbn001",
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+  // serverSelectionTimeoutMS: 30000
 })
-.then( () => console.log("MongoDb is connected"))
-.catch ( err => console.log(err) );
+  .then(() => {
+    console.log("MongoDb is connected");
+    watchDatabase();
+  }
+  )
+  .catch(err => console.log(err));
+
+  const db = mongoose.connection;
+
+  function watchDatabase() {
+     const changeStream = db.watch()
+
+    changeStream.on("change", (change) => {
+        console.log("Data changed:", change);
+
+        // Send update to all connected WebSocket clients
+        wss.clients.forEach(client => {
+            if (client.readyState === 1) { // WebSocket.OPEN
+                client.send(JSON.stringify(change));
+            }
+        });
+    });
+
+    console.log("Watching DB for changes...");
+}
 
 app.use('/', route);
 
 app.listen(process.env.PORT || 3000, function () {
-    console.log('Express app running on port ' + (process.env.PORT||3000));
+  console.log('Express app running on port ' + (process.env.PORT || 3000));
 });
