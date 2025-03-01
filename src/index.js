@@ -6,7 +6,7 @@ const app = express();
 import mongoose from 'mongoose';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import { WebSocketServer } from "ws";
+// import { WebSocketServer } from "ws";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -58,9 +58,9 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-const PORT = 8080;
+// const PORT = 8080;
 
-const wss = new WebSocketServer({ port: PORT });
+// const wss = new WebSocketServer({ port: PORT });
 
 
 mongoose.connect(process.env.CONNECTION_STRING, {
@@ -71,29 +71,29 @@ mongoose.connect(process.env.CONNECTION_STRING, {
 })
   .then(() => {
     console.log("MongoDb is connected");
-    watchDatabase();
+    // watchDatabase();
   }
   )
   .catch(err => console.log(err));
 
   const db = mongoose.connection;
 
-  function watchDatabase() {
-     const changeStream = db.watch()
+//   function watchDatabase() {
+//      const changeStream = db.watch()
 
-    changeStream.on("change", (change) => {
-        console.log("Data changed:", change);
+//     changeStream.on("change", (change) => {
+//         console.log("Data changed:", change);
 
-        // Send update to all connected WebSocket clients
-        wss.clients.forEach(client => {
-            if (client.readyState === 1) { // WebSocket.OPEN
-                client.send(JSON.stringify(change));
-            }
-        });
-    });
+//         // Send update to all connected WebSocket clients
+//         wss.clients.forEach(client => {
+//             if (client.readyState === 1) { // WebSocket.OPEN
+//                 client.send(JSON.stringify(change));
+//             }
+//         });
+//     });
 
-    console.log("Watching DB for changes...");
-}
+//     console.log("Watching DB for changes...");
+// }
 
 app.use('/', route);
 
