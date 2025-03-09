@@ -1,23 +1,35 @@
 // models/User.js
 import mongoose from "mongoose";
 
-const ticketSchema = new mongoose.Schema(
+const portfolioSchema = new mongoose.Schema(
     {
         userId: {
             type: String,
             required: true
         },
         holdAmount:{
-            type: String
+            type: Number,
+            default: 0.00
+        },
+        holdQuantity: {
+            type: Number,
+            default: 0
         },
         soldAmount: {
-            type: String
+            type: Number,
+            default: 0.00
+        },
+        soldQuantity: {
+            type: Number,
+            default: 0
         },
         profit: {
-            type: String
+            type: Number,
+            default: 0.00
         },
         loss: {
-            type: String
+            type: Number,
+            default: 0.00
         },
         createdAt: {
             type: Date,
@@ -34,6 +46,6 @@ const ticketSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Portfolio = mongoose.model("Portfolio", ticketSchema);
+const Portfolio = mongoose.model("Portfolio", portfolioSchema);
 
 export default Portfolio;

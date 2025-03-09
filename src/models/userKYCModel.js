@@ -1,37 +1,37 @@
 // models/User.js
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const userKYCSchema = new mongoose.Schema(
     {
-        phone: {
-            type: String,
-            sparse: true,
-            unique: true,
-            default:null
-        },
         userId: {
             type: String,
             required: true,
             unique: true,
         },
-        name: {
+        phone: {
             type: String,
-            lowercase: true,
-            default:null
+            required: true,
+            unique: true,
         },
         email: {
             type: String,
             unique: true,
-            sparse: true, 
+            required: true,
+            lowercase: true
+        },
+        idProof: {
+            type:String,
+            required: true,
             lowercase: true,
-            default:null
         },
-        profilePicture: {
-            type: String, 
+        idNumber: {
+            type:String,
+            required: true
         },
-        dob: { 
-            type: Date,
-            default:null
+        nameOnId: {
+            type: String,
+            lowercase: true,
+            required: true
         },
         createdAt: {
             type: Date,
@@ -48,6 +48,6 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
+const UserKYC = mongoose.model("UserKYC", userKYCSchema);
 
-export default User;
+export default UserKYC;

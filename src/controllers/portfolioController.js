@@ -1,9 +1,11 @@
+import Contest from "../models/contestModel.js";
 import Portfolio from "../models/portfolioModel.js";
+import Ticket from "../models/ticketModel.js";
 
 
 export const createPortfolio = async (req, res) => {
 
-    const { userId, holdAmount, soldAmount, profit, loss } = req.body
+    const { userId, holdAmount, soldAmount, holdQuantity, soldQuantity, profit, loss } = req.body
 
     if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
@@ -13,10 +15,12 @@ export const createPortfolio = async (req, res) => {
 
         const requestPayload = {
             userId: userId,
-            holdAmount: holdAmount || "0.000",
-            soldAmount: soldAmount || "0.000",
-            profit: profit || "0.000",
-            loss: loss || "0.000"
+            holdAmount: holdAmount || 0.00,
+            holdQuantity: holdQuantity || 0,
+            soldAmount: soldAmount || 0.00,
+            soldQuantity: soldQuantity || 0,
+            profit: profit || 0.00,
+            loss: loss || 0.00
         }
 
         const portfolio = new Portfolio(requestPayload)
@@ -34,9 +38,9 @@ export const createPortfolio = async (req, res) => {
 };
 
 
-export const getPortfolioHold = async (req, res) => {
+export const getPortfolio = async(req, res) => {
 
-    const { userId, salePrice, resalePrice } = req.body
+    const { userId } = req.query
 
     if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
@@ -44,50 +48,84 @@ export const getPortfolioHold = async (req, res) => {
 
     try {
 
-        const getPortfolio = await Portfolio.findOne({ userId: userId })
+        const getPortfolio = await Portfolio.findOne({ userId: userId, isDeleted: false })
 
-        if(!getPortfolio) {
+        if (!getPortfolio) {
             return res.status(404).json({ error: "No Portfolio found!" });
         }
 
-        let updatedHoldAmount = 0;
-        if(resalePrice) {
-            updatedHoldAmount =  Number(getPortfolio.holdAmount) + Number(resalePrice) - Number(salePrice); 
-        } else {
-            updatedHoldAmount =  Number(getPortfolio.holdAmount) + Number(salePrice);
-        }
-
-        const updatedSoldAmount = Number(getPortfolio.soldAmount) + 0;
-
-        const updatePortfolio = await Portfolio.updateOne(
-            {userId: userId}, 
-            {
-                holdAmount: updatedHoldAmount, 
-                soldAmount: updatedSoldAmount
-            }
-        )
-       
-        if(!updatePortfolio) {
-            return res.status(400).json({ error: "Portfolio Updation fail" });
+        const responsePayload = {
+            userId: getPortfolio.userId,
+            totalInvested: getPortfolio.holdAmount,
+            totalHoldQuantity: getPortfolio.holdQuantity,
+            totalSold: getPortfolio.soldAmount,
+            totalSoldQuantity: getPortfolio.soldQuantity,
+            totalProfit: getPortfolio.profit,
+            totalLoss: getPortfolio.loss
         }
 
         return res.status(200).json({
             success: true,
-            message: "Porfolio Created",
-            data: updatePortfolio
+            message: "Porfolio Fetched Success",
+            data: responsePayload
         });
 
     } catch (error) {
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
+}
+
+export const getPortfolioHold = async (req, res) => {
+
+    const { userId } = req.query
+
+    if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+    }
+
+    try {
+
+        await Ticket.aggregate([
+            {
+                $match: { userId: userId, isDeleted: false }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalInvested: {
+                        $sum: {
+                            $toDouble: { $ifNull: ["$salePrice", "0"] }
+                        }
+                    },
+                    totalCount: { $sum: 1 }
+                }
+            }
+        ])
+            .then(result => {
+                return res.status(200).json({
+                    success: true,
+                    message: "Invtested amount fetch success",
+                    data: {
+                        totalInvested: result[0].totalInvested,
+                        totalHoldQuantity: result[0].totalCount
+                    }
+                });
+            })
+            .catch(err => {
+                console.error("Aggregation error:", err);
+            });
+
+    } catch (error) {
+        res.status(500).json({ error: "Portfolio creation fail", details: error.message });
+    }
 };
-
-
 
 
 export const updatePortfolioSell = async (req, res) => {
 
-    const { userId, salePrice, resalePrice } = req.body
+    const { userId, previousPrice, todayPrice, soldQuantity } = req.body
+
+    console.log("updatePortfolioSell started", userId, previousPrice, todayPrice, soldQuantity)
 
     if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
@@ -95,40 +133,80 @@ export const updatePortfolioSell = async (req, res) => {
 
     try {
 
-        const getPortfolio = await Portfolio.findOne({ userId: userId })
+        const getPortfolio = await Portfolio.findOne({ userId: userId, isDeleted: false })
 
-        if(!getPortfolio) {
+        if (!getPortfolio) {
             return res.status(404).json({ error: "No Portfolio found!" });
         }
 
-        let updatedHoldAmount = 0;
-        if((Number(getPortfolio.holdAmount) - Number(salePrice)) < 0) {
-            updatedHoldAmount =  0; 
-        } else {
-            updatedHoldAmount =  Number(getPortfolio.holdAmount) - Number(salePrice);
-        }
-       
-        const updatedSoldAmount = Number(getPortfolio.soldAmount) + Number(resalePrice);
+        console.log({getPortfolio: getPortfolio})
+
+        const updatedSoldAmount = Number(getPortfolio.soldAmount) + Number(todayPrice)
+        const profit = Number(getPortfolio.profit)+ Number(todayPrice) - Number(previousPrice)
+        const updatedSoldQuantity = Number(getPortfolio.soldQuantity) + Number(soldQuantity) 
 
         const updatePortfolio = await Portfolio.updateOne(
-            {userId: userId}, 
+            { userId: userId },
             {
-                holdAmount: updatedHoldAmount, 
-                soldAmount: updatedSoldAmount
+                soldAmount: updatedSoldAmount,
+                soldQuantity: updatedSoldQuantity,
+                profit: profit
             }
         )
-       
-        if(!updatePortfolio) {
+
+        if (!updatePortfolio) {
             return res.status(400).json({ error: "Portfolio Updation fail" });
+        }
+
+        console.log({updatePortfolio: updatePortfolio})
+
+        const responsePayload = {
+            userId: updatePortfolio.userId,
+            totalInvested: updatePortfolio.holdAmount,
+            totalHoldQuantity: updatePortfolio.holdQuantity,
+            totalSold: updatePortfolio.soldAmount,
+            totalSoldQuantity: updatePortfolio.soldQuantity,
+            totalProfit: updatePortfolio.profit,
+            totalLoss: updatePortfolio.loss
         }
 
         return res.status(200).json({
             success: true,
-            message: "Porfolio Created",
-            data: updatePortfolio
+            message: "Porfolio Updated Success",
+            data: responsePayload
         });
 
     } catch (error) {
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 };
+
+
+export async function updateUserPortfolio(userId) {
+    const aggregationResult = await Ticket.aggregate([
+        {
+            $match: { userId: userId, isDeleted: false }
+        },
+        {
+            $group: {
+                _id: null,
+                holdAmount: {
+                    $sum: {
+                        $toDouble: { $ifNull: ["$salePrice", "0"] }
+                    }
+                },
+                holdQuantity: { $sum: 1 }
+            }
+        }
+    ]);
+
+    console.log(aggregationResult[0])
+
+    const { holdAmount = 0, holdQuantity = 0 } = aggregationResult[0] || {};
+
+    await Portfolio.findOneAndUpdate(
+        { userId },
+        { holdAmount, holdQuantity },
+        { upsert: true, new: true }
+    );
+}
