@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const moduleName = __filename;
 
 export const createTicket = async (req, res) => {
-
+    console.log(">>>>>>>>>>>>>>>>>>",req.body)
     const {
         userId,
         razorpayPaymentId,

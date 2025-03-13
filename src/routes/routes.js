@@ -29,7 +29,7 @@ router.get('/get-all-contest', auth, getAllContest)
 
 
 /************************ Payment **********************************/
-router.post('/save-payment', auth, authorize, savePayment)
+router.post('/save-payment',  savePayment)
 router.post('/save-payment-buy', auth, authorize, savePaymentBuy)
 router.post('/save-payment-sell', auth, authorize, savePaymentSell)
 
