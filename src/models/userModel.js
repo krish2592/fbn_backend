@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema(
             type: String,
             sparse: true,
             unique: true,
-            default:null
         },
         userId: {
             type: String,
@@ -24,7 +23,6 @@ const userSchema = new mongoose.Schema(
             unique: true,
             sparse: true, 
             lowercase: true,
-            default:null
         },
         profilePicture: {
             type: String, 
@@ -32,6 +30,9 @@ const userSchema = new mongoose.Schema(
         dob: { 
             type: Date,
             default:null
+        },
+        refreshToken: {
+            type: String
         },
         createdAt: {
             type: Date,

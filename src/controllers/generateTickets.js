@@ -2,7 +2,11 @@ import "dotenv/config";
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { createId } from '@paralleldrive/cuid2';
+import logger from "../logger.js";
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const moduleName = __filename;
 // Secret key used for signing/verifying tickets
 const SECRET_KEY =  process.env.TICKET_SECRET_KEY;
 
@@ -15,7 +19,6 @@ export function generateTicketId() {
 
 // Generate ticket for user ID 12345
 const ticketId = generateTicketId();
-console.log('Generated Ticket ID:', ticketId);
 
 
 function verifyTicket(ticketId) {
@@ -23,7 +26,7 @@ function verifyTicket(ticketId) {
     const parts = ticketId.split('-');
 
     if (parts.length !== 3) {
-        console.log('Invalid ticket format');
+        logger.error(`${moduleName}: Invalid ticket format`);
         return false;
     }
 
@@ -33,14 +36,13 @@ function verifyTicket(ticketId) {
 
     const recalculatedHmac = crypto.createHmac('sha256', SECRET_KEY).update(baseString).digest('hex');
     if (recalculatedHmac.substring(0, 11).toUpperCase() === providedHmacPart) {
-        console.log('Ticket verification successful');
+        logger.info(`${moduleName}: Ticket verification successful`);
         return true;
     } else {
-        console.log('Ticket verification failed');
+        logger.error(`${moduleName}: Ticket verification failed`);
         return false;
     }
 }
 
 // Verify the ticket with user ID 12345
 const isValid = verifyTicket(ticketId);
-console.log(`Is ticket valid? ${isValid}`);

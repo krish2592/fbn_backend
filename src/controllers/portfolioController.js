@@ -1,7 +1,11 @@
 import Contest from "../models/contestModel.js";
 import Portfolio from "../models/portfolioModel.js";
 import Ticket from "../models/ticketModel.js";
+import logger from '../logger.js';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const moduleName = __filename;
 
 export const createPortfolio = async (req, res) => {
 
@@ -33,6 +37,7 @@ export const createPortfolio = async (req, res) => {
         });
 
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation failed", details: error.message });
     }
 };
@@ -51,17 +56,32 @@ export const getPortfolio = async(req, res) => {
         const getPortfolio = await Portfolio.findOne({ userId: userId, isDeleted: false })
 
         if (!getPortfolio) {
-            return res.status(404).json({ error: "No Portfolio found!" });
+
+            const defaultPortfolio = {
+                userId: userId,
+                totalInvested: 0.00,
+                totalHoldQuantity: 0,
+                totalSold: 0.00,
+                totalSoldQuantity: 0,
+                totalProfit: 0.00,
+                totalLoss: 0.00
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Default portfolio",
+                data: defaultPortfolio
+            });
         }
 
         const responsePayload = {
             userId: getPortfolio.userId,
-            totalInvested: getPortfolio.holdAmount,
-            totalHoldQuantity: getPortfolio.holdQuantity,
-            totalSold: getPortfolio.soldAmount,
-            totalSoldQuantity: getPortfolio.soldQuantity,
-            totalProfit: getPortfolio.profit,
-            totalLoss: getPortfolio.loss
+            totalInvested: getPortfolio.holdAmount || 0.00,
+            totalHoldQuantity: getPortfolio.holdQuantity || 0,
+            totalSold: getPortfolio.soldAmount || 0.00,
+            totalSoldQuantity: getPortfolio.soldQuantity || 0,
+            totalProfit: getPortfolio.profit || 0.00,
+            totalLoss: getPortfolio.loss || 0.00
         }
 
         return res.status(200).json({
@@ -71,6 +91,7 @@ export const getPortfolio = async(req, res) => {
         });
 
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 }
@@ -85,7 +106,7 @@ export const getPortfolioHold = async (req, res) => {
 
     try {
 
-        await Ticket.aggregate([
+        const respData = await Ticket.aggregate([
             {
                 $match: { userId: userId, isDeleted: false }
             },
@@ -101,21 +122,37 @@ export const getPortfolioHold = async (req, res) => {
                 }
             }
         ])
-            .then(result => {
-                return res.status(200).json({
-                    success: true,
-                    message: "Invtested amount fetch success",
-                    data: {
-                        totalInvested: result[0].totalInvested,
-                        totalHoldQuantity: result[0].totalCount
-                    }
-                });
-            })
-            .catch(err => {
-                console.error("Aggregation error:", err);
-            });
+
+        if(!respData || respData.length == 0) {
+            return res.status(400).json({ error: "No holdings found" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Invtested amount fetch success",
+            data: {
+                userId: userId,
+                totalInvested: respData[0].totalInvested || 0.00,
+                totalHoldQuantity: respData[0].totalCount || 0
+            }
+        });
+
+            // .then(result => {
+            //     return res.status(200).json({
+            //         success: true,
+            //         message: "Invtested amount fetch success",
+            //         data: {
+            //             totalInvested: result[0].totalInvested || 0.00,
+            //             totalHoldQuantity: result[0].totalCount || 0
+            //         }
+            //     });
+            // })
+            // .catch(err => {
+            //     console.error("Aggregation error:", err);
+            // });
 
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 };
@@ -124,8 +161,6 @@ export const getPortfolioHold = async (req, res) => {
 export const updatePortfolioSell = async (req, res) => {
 
     const { userId, previousPrice, todayPrice, soldQuantity } = req.body
-
-    console.log("updatePortfolioSell started", userId, previousPrice, todayPrice, soldQuantity)
 
     if (!userId) {
         return res.status(400).json({ error: "User ID is required" });
@@ -138,8 +173,6 @@ export const updatePortfolioSell = async (req, res) => {
         if (!getPortfolio) {
             return res.status(404).json({ error: "No Portfolio found!" });
         }
-
-        console.log({getPortfolio: getPortfolio})
 
         const updatedSoldAmount = Number(getPortfolio.soldAmount) + Number(todayPrice)
         const profit = Number(getPortfolio.profit)+ Number(todayPrice) - Number(previousPrice)
@@ -158,8 +191,6 @@ export const updatePortfolioSell = async (req, res) => {
             return res.status(400).json({ error: "Portfolio Updation fail" });
         }
 
-        console.log({updatePortfolio: updatePortfolio})
-
         const responsePayload = {
             userId: updatePortfolio.userId,
             totalInvested: updatePortfolio.holdAmount,
@@ -177,6 +208,7 @@ export const updatePortfolioSell = async (req, res) => {
         });
 
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 };

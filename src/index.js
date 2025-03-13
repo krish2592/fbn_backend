@@ -6,6 +6,12 @@ const app = express();
 import mongoose from 'mongoose';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import logger from "./logger.js";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const moduleName = __filename;
+
 // import { WebSocketServer } from "ws";
 
 app.use(express.json());
@@ -60,8 +66,8 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-// const PORT = 8080;
 
+// const PORT = 8080;
 // const wss = new WebSocketServer({ port: PORT });
 
 
@@ -72,7 +78,7 @@ mongoose.connect(process.env.CONNECTION_STRING, {
   // serverSelectionTimeoutMS: 30000
 })
   .then(() => {
-    console.log("MongoDb is connected");
+    logger.info(`${moduleName}: Database is connected`);
     // watchDatabase();
   }
   )
@@ -100,5 +106,5 @@ mongoose.connect(process.env.CONNECTION_STRING, {
 app.use('/', route);
 
 app.listen(process.env.PORT || 3000, function () {
-  console.log('Express app running on port ' + (process.env.PORT || 3000));
+  logger.info(`${moduleName}: Express app running on port:`+ (process.env.PORT || 3000));
 });

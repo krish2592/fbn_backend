@@ -1,4 +1,9 @@
 import Support from "../models/supportModel.js";
+import logger from '../logger.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const moduleName = __filename;
 
 export const createSupportTicket = async (req, res) => {
 
@@ -20,8 +25,9 @@ export const createSupportTicket = async (req, res) => {
             status: true,
             messaage: "Ticket created success"
         })
-    } catch (err) {
-        return res.status(500).send({ status: false, message: err.message, error: err })
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }
 
@@ -49,8 +55,9 @@ export const getUserTickets = async (req, res) => {
             message: "Ticket created success",
             data: getAllTickets
         })
-    } catch (err) {
-        return res.status(500).send({ status: false, message: err.message, error: err })
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }
 
@@ -71,22 +78,19 @@ export const addMessageUser = async (req, res) => {
             timestamp: timestamp
         }
 
-        console.log(messagePayload, id, ticketId)
-
         const getUpdate  = await Support.findOneAndUpdate(
             {userId: id, ticketId: ticketId, isDeleted: false},
             { $push: { messages: messagePayload } }, 
             { new: true } 
         )
 
-        console.log({getUpdate:getUpdate})
-
         return res.status(200).send({
             status: true,
             message: "Message Added Success"
         })
-    } catch (err) {
-        return res.status(500).send({ status: false, message: err.message, error: err })
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }
 
@@ -119,7 +123,8 @@ export const addMessageSupport = async (req, res) => {
             status: true,
             message: "Message Added Success"
         })
-    } catch (err) {
-        return res.status(500).send({ status: false, message: err.message, error: err })
+    } catch (error) {
+         logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }

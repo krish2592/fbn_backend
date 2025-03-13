@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "C:\\Local Disk\\All Business\\fbn_backend\\logs\\.de0593ddb395ead34199bd1e5fd82b8c6f15600e-audit.json",
+    "files": [
+        {
+            "date": 1741764961730,
+            "name": "C:\\Local Disk\\All Business\\fbn_backend\\logs\\app-2025-03-12.log",
+            "hash": "de444ad8833f8bb34d25ccb5cce38ca4efd03fda797caf78528a893cf596fd30"
+        }
+    ],
+    "hashType": "sha256"
+}

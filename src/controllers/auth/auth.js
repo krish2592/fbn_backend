@@ -1,32 +1,144 @@
-import axios from 'axios';
+import jwt from 'jsonwebtoken';
+import User from '../../models/userModel.js';
+import logger from "../../logger.js";
+import { fileURLToPath } from 'url';
+import Priviledge from '../../models/priviledgeModel.js';
 
-export const authorizePeClient = (req, res) => {
+const __filename = fileURLToPath(import.meta.url);
+const moduleName = __filename;
 
-    // Set your client details
-    const clientId = "<your_client_id>";
-    const clientSecret = "<your_client_secret>";
-    const clientVersion = 1; // for UAT environment
-    const grantType = "client_credentials";
+export const auth = async (req, res, next) => {
 
-    // Data to send in the request body
-    const data = qs.stringify({
-        client_id: clientId,
-        client_version: clientVersion,
-        client_secret: clientSecret,
-        grant_type: grantType
-    });
+    logger.info(`${moduleName}: Authentication started`);
 
-    // Make the POST request
-    axios.post('https://api-preprod.phonepe.com/apis/pg-sandbox/v1/oauth/token', data, {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+    const token = req.headers["authorization"]?.split(" ")[1] || req.headers["Authorization"]?.split(" ")[1];
+
+    if (!token) {
+        logger.info(`${moduleName}: Access denied`);
+        return res.status(401).json({ message: 'Access denied.' });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = decoded;
+        next(); 
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        res.status(403).json({ message: 'Authentication error' });
+    }
+
+} ;
+
+
+export const authorize = async (req, res, next) => {
+
+    logger.info(`${moduleName}: Authorization started`);
+
+    const {id } = req.user;
+   
+    if (!id) {
+        return res.status(401).json({ message: 'Not authorize' });
+    }
+
+    try {
+        const getUser = await User.findOne({userId: id, isDeleted: false}).select({userId:1})
+
+        if(!getUser.userId) {
+            logger.info(`${moduleName}: Not an authorise user: ${id}`);
+            return res.status(401).json({ message: 'Not an authorise user' });
         }
-    })
-        .then(response => {
-            console.log('Response:', response.data);
-        })
-        .catch(error => {
-            console.error('Error:', error.response ? error.response.data : error.message);
-        });
 
-}
+        next(); 
+
+    } catch (error) {
+        logger.error(`${moduleName}: Error Message: ${error.message} Error: ${error}`);
+        res.status(401).json({ message: 'Not authorize' });
+    }
+
+} ;
+
+
+export const authorizeAdmin = async (req, res, next) => {
+
+    logger.info(`${moduleName}: Authorization started`);
+
+    const {id } = req.user;
+   
+    if (!id) {
+        return res.status(401).json({ message: 'Not authorize' });
+    }
+
+    try {
+        const getUser = await Priviledge.findOne({userId: id, isDeleted: false})
+
+        if(!getUser.userId) {
+            logger.info(`${moduleName}: Not an authorise user: ${id}`);
+            return res.status(401).json({ message: 'Not an authorise user' });
+        }
+
+        if(getUser.accountType = "admin") {
+            next(); 
+        } 
+    } catch (error) {
+        logger.error(`${moduleName}: Error Message: ${error.message} Error: ${error}`);
+        res.status(401).json({ message: 'Not authorize' });
+    }
+
+} ;
+
+
+export const authorizeDeveloper = async (req, res, next) => {
+
+    logger.info(`${moduleName}: Authorization started`);
+
+    const {id } = req.user;
+   
+    if (!id) {
+        return res.status(401).json({ message: 'Not authorize' });
+    }
+
+    try {
+        const getUser = await Priviledge.findOne({userId: id, isDeleted: false})
+
+        if(!getUser.userId) {
+            logger.info(`${moduleName}: Not an authorise user: ${id}`);
+            return res.status(401).json({ message: 'Not an authorise user' });
+        }
+
+        if(getUser.accountType = "developer") {
+            next(); 
+        } 
+    } catch (error) {
+        logger.error(`${moduleName}: Error Message: ${error.message} Error: ${error}`);
+        res.status(401).json({ message: 'Not authorize' });
+    }
+
+} ;
+
+
+export const authorizeSupport = async (req, res, next) => {
+
+    logger.info(`${moduleName}: Authorization started`);
+
+    const {id } = req.user;
+   
+    if (!id) {
+        return res.status(401).json({ message: 'Not authorize' });
+    }
+
+    try {
+        const getUser = await Priviledge.findOne({userId: id, isDeleted: false})
+
+        if(!getUser.userId) {
+            logger.info(`${moduleName}: Not an authorise user: ${id}`);
+            return res.status(401).json({ message: 'Not an authorise user' });
+        }
+
+        if(getUser.accountType = "support") {
+            next(); 
+        } 
+    } catch (error) {
+        logger.error(`${moduleName}: Error Message: ${error.message} Error: ${error}`);
+        res.status(401).json({ message: 'Not authorize' });
+    }
+
+} ;

@@ -1,69 +1,16 @@
 import "dotenv/config";
-import Payment from '../models/paymentModel.js';
 import { generateTicketId } from '../controllers/generateTickets.js';
 import Ticket from "../models/ticketModel.js";
 import User from "../models/userModel.js";
 import Transfer from "../models/transferModel.js";
 import Upgrade from "../models/upgradeModel.js";
+import logger from "../logger.js";
+import { fileURLToPath } from 'url';
 
-// async function watchChanges() {
-
-//     try {
-//         const changeStream = Payment.watch()
-//         console.log("Watching for changes...");
-
-//         // Listen for changes
-//         changeStream.on("change", async (change) => {
-//             console.log("Change detected:", change);
-
-//             // Check if the status was updated to "pending"
-//             if (
-//                 change.operationType === "update" &&
-//                 change.updateDescription &&
-//                 change.updateDescription.updatedFields["ticketStatus"] === "Pending"
-//             ) {
-//                 const documentId = change.documentKey._id;
-
-//                 try {
-//                     // Retrieve the full document from the 'pay' collection
-//                     const payDocument = await Payment.findById(documentId);
-
-//                     if (payDocument) {
-//                         // Insert data into the 'tpay' collection
-//                         const tpayData = {
-//                             payId: payDocument._id,
-//                             amount: payDocument.amount,
-//                         };
-
-//                         await TPay.create(tpayData);
-//                         console.log("Inserted into TPay:", tpayData);
-
-//                         // Update the status in the 'pay' collection to "created"
-//                         await Pay.findByIdAndUpdate(documentId, { status: "created" });
-//                         console.log("Status updated to 'created' for document:", documentId);
-//                     }
-//                 } catch (error) {
-//                     console.error("Error processing change:", error);
-//                 }
-//             }
-//         });
-
-//         // Handle errors
-//         changeStream.on("error", (error) => {
-//             console.error("Change stream error:", error);
-//             watchChanges(); // Restart the watcher on error
-//         });
-//     } catch (error) {
-//         console.error("Error connecting to MongoDB:", error);
-//     }
-// }
-
-// watchChanges();
-
+const __filename = fileURLToPath(import.meta.url);
+const moduleName = __filename;
 
 export const createTicket = async (req, res) => {
-
-    console.log("ZZZZZZZZZZZZZZZZ", req.body);
 
     const {
         userId,
@@ -83,8 +30,6 @@ export const createTicket = async (req, res) => {
         tickets.push(generateTicketId());
     }
 
-    // console.log(tickets);
-
     const reqPayload = []
 
     for (let i = 0; i < tickets.length; i++) {
@@ -100,13 +45,13 @@ export const createTicket = async (req, res) => {
         payload["isActiveSell"] = isActiveSell
         reqPayload.push(payload)
     }
-    console.log("ggg", reqPayload);
     // const ticket = new Ticket(reqPayload)
     try {
         const result = await Ticket.insertMany(reqPayload)
         // console.log("Bulk insert successful:", result);
-    } catch (err) {
-        console.error("Bulk insert failed:", err);
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).json({ error: "Ticket Generation Error:", details: error.message });
     }
 
 }
@@ -127,15 +72,14 @@ export const getMyContest = async (req, res) => {
 
         res.send({ success: true, message: "Contest Ticket Fetched Success!", data: result })
 
-    } catch (err) {
-        console.error("Finding Contest Error: ", err);
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).json({ error: "Finding Contest Error:", details: error.message });
     }
 }
 
 
 export const updateTicket = async (req, res) => {
-
-    console.log("updated ticket started  -----------------")
 
     const { ticketId, razorpayPaymentId, pricePerQuantity, poolPrize, isActiveBuy, isActiveSell } = req.body
 
@@ -143,9 +87,6 @@ export const updateTicket = async (req, res) => {
     if (!ticketId) {
         return res.status(400).json({ error: "Ticket ID is required" });
     }
-
-
-    console.log({ "ticketId": ticketId })
 
     try {
         const updatedTicket = await Ticket.findOneAndUpdate(
@@ -176,6 +117,7 @@ export const updateTicket = async (req, res) => {
 
         res.json(resPayload);
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Update failed", details: error.message });
     }
 };
@@ -184,11 +126,7 @@ export const updateTicket = async (req, res) => {
 export const upgradeTicket = async (req, res) => {
     try {
 
-        console.log("upgrade ticket")
-
         const { userId, ticketId, razorpayPaymentId, pricePerQuantity, poolPrize, isActiveBuy, isActiveSell } = req.body
-
-        console.log("upgrade ticket request", userId, ticketId, razorpayPaymentId, pricePerQuantity, poolPrize, isActiveBuy, isActiveSell)
 
         if (!ticketId) {
             return res.status(400).json({ error: "Ticket ID is required" });
@@ -201,8 +139,6 @@ export const upgradeTicket = async (req, res) => {
             return res.status(404).send({ success: false, message: "Ticket not found!", id: null });
         }
 
-        console.log({ getTicket: getTicket })
-
         const upgradePayload = {
             ticketId: ticketId,
             userId: userId,
@@ -210,15 +146,13 @@ export const upgradeTicket = async (req, res) => {
             oldPaymentId: getTicket.paymentId
         }
 
-        console.log({ upgradePayload: upgradePayload })
-
         const upgrade = new Upgrade(upgradePayload);
         const upgradeResp = await upgrade.save()
 
         if (!upgradeResp) {
             return res.status(400).send({ success: false, message: "Transfer is not created!", id: null });
         }
-        console.log({ upgradeResp: upgradeResp })
+
         const upgradeTicket = await Ticket.findOneAndUpdate(
             { ticketId: ticketId, isDeleted: false, onSell: false },
             {
@@ -240,11 +174,10 @@ export const upgradeTicket = async (req, res) => {
             return res.status(404).send({ success: false, message: "Ticket not found!", id: null });
         }
 
-        console.log({ upgradeTicket: upgradeTicket })
-
         return res.status(200).send({ success: true, message: "upgrade success!", data: ticketId });
 
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket upgradation failed!", details: error.message });
     }
 };
@@ -252,8 +185,6 @@ export const upgradeTicket = async (req, res) => {
 
 
 export const transferTicket = async (req, res) => {
-
-    console.log("transfer ticket started  -----------------")
 
     const { userId, ticketId, razorpayPaymentId, pricePerQuantity, poolPrize, isActiveBuy, isActiveSell } = req.body
 
@@ -312,6 +243,7 @@ export const transferTicket = async (req, res) => {
         return res.status(200).send({ success: true, message: "transfer success!", data: ticketId });
 
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket transfer failed!", details: error.message });
     }
 };
@@ -319,42 +251,47 @@ export const transferTicket = async (req, res) => {
 
 export const searchTicket = async (req, res) => {
 
-    const query = req.query.query;
+    try {
 
-    console.log(query)
+        const query = req.query.query;
 
-    if (!query) {
-        return res.status(400).send({ success: false, message: "Please enter email or ticket id", data: [] });
-    }
-
-    if (query.includes("@") && query.includes(".")) {
-        const getUser = await User.findOne({ email: query.trim().toLowerCase(), isDeleted: false }).select({ userId: 1 })
-        console.log({getUser: getUser})
-        
-        if (!getUser) {
-            return res.status(404).send({ success: false, message: "User does not exist!", data: [] });
-        }
-        
-        const getTickets = await Ticket.find({ userId: getUser.userId, isDeleted: false, onSell: true })
-            .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
-
-        if (getTickets.length == 0) {
-            return res.status(400).send({ success: false, message: "No tickets to sell", data: null });
+        if (!query) {
+            logger.info(`${moduleName}: No query found`);
+            return res.status(400).send({ success: false, message: "Please enter email or ticket id", data: [] });
         }
 
-        return res.status(200).send({ success: true, message: "fetched success!", data: getTickets });
+        if (query.includes("@") && query.includes(".")) {
+            const getUser = await User.findOne({ email: query.trim().toLowerCase(), isDeleted: false }).select({ userId: 1 })
 
-    } else {
-        const getTicket = await Ticket.find({ ticketId: query.trim(), isDeleted: false, onSell: true })
-            .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
+            if (!getUser) {
+                logger.info(`${moduleName}: User not found`);
+                return res.status(404).send({ success: false, message: "User does not exist!", data: [] });
+            }
 
-        console.log({ getTicket: getTicket })
-        if (getTicket.length == 0) {
-            return res.status(404).send({ success: false, message: "Items not found!", data: [] });
+            const getTickets = await Ticket.find({ userId: getUser.userId, isDeleted: false, onSell: true })
+                .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
+
+            if (getTickets.length == 0) {
+                logger.info(`${moduleName}: No tickets to sell`);
+                return res.status(400).send({ success: false, message: "No tickets to sell", data: null });
+            }
+
+            return res.status(200).send({ success: true, message: "fetched success!", data: getTickets });
+
+        } else {
+            const getTicket = await Ticket.find({ ticketId: query.trim(), isDeleted: false, onSell: true })
+                .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
+
+            if (getTicket.length == 0) {
+                logger.info(`${moduleName}: Items not found!`);
+                return res.status(404).send({ success: false, message: "Items not found!", data: [] });
+            }
+
+            return res.status(200).send({ success: true, message: "fetched success!", data: getTicket });
         }
-
-        console.log({ getUser: query.trim() })
-        return res.status(200).send({ success: true, message: "fetched success!", data: getTicket });
+    } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).json({ error: "Searching Ticket failed", details: error.message });
     }
 }
 
@@ -363,7 +300,7 @@ export const activateTicket = async (req, res) => {
 
     try {
         const query = req.query.query;
-        console.log(query)
+
         if (!query) {
             return res.status(400).json({ success: false, message: "Search query is required!", id: null });
         }
@@ -376,6 +313,7 @@ export const activateTicket = async (req, res) => {
 
         return res.status(200).json({ success: true, message: "Ticket activated successfully!", id: updateTicket.ticketId });
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket activation failed", details: error.message });
     }
 
@@ -398,6 +336,7 @@ export const deactivateTicket = async (req, res) => {
 
         return res.status(200).json({ success: true, message: "Ticket deactivated successfully!", id: updateTicket.ticketId });
     } catch (error) {
+        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket deactivation failed", details: error.message });
     }
 }
