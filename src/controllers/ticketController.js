@@ -256,7 +256,7 @@ export const searchTicket = async (req, res) => {
         const query = req.query.query;
 
         if (!query) {
-            logger.info(`${moduleName}: No query found`);
+           Console.log(`${moduleName}: No query found`);
             return res.status(400).send({ success: false, message: "Please enter email or ticket id", data: [] });
         }
 
@@ -264,7 +264,7 @@ export const searchTicket = async (req, res) => {
             const getUser = await User.findOne({ email: query.trim().toLowerCase(), isDeleted: false }).select({ userId: 1 })
 
             if (!getUser) {
-                logger.info(`${moduleName}: User not found`);
+               Console.log(`${moduleName}: User not found`);
                 return res.status(404).send({ success: false, message: "User does not exist!", data: [] });
             }
 
@@ -272,7 +272,7 @@ export const searchTicket = async (req, res) => {
                 .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
 
             if (getTickets.length == 0) {
-                logger.info(`${moduleName}: No tickets to sell`);
+               Console.log(`${moduleName}: No tickets to sell`);
                 return res.status(400).send({ success: false, message: "No tickets to sell", data: null });
             }
 
@@ -283,7 +283,7 @@ export const searchTicket = async (req, res) => {
                 .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
 
             if (getTicket.length == 0) {
-                logger.info(`${moduleName}: Items not found!`);
+               Console.log(`${moduleName}: Items not found!`);
                 return res.status(404).send({ success: false, message: "Items not found!", data: [] });
             }
 
