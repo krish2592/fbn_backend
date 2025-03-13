@@ -35,7 +35,7 @@ router.post('/save-payment-sell', auth, authorize, savePaymentSell)
 
 
 /************************ Ticket ***********************************/
-router.post('/create-ticket', auth, authorize, createTicket)
+router.post('/create-ticket', auth, createTicket)
 router.get('/get-my-contest', auth, getMyContest)
 router.patch('/update-ticket-buy', auth, authorize, updateTicket)
 router.post('/upgrade-ticket', auth, authorize, upgradeTicket)
