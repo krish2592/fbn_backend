@@ -1,7 +1,7 @@
 import Contest from "../models/contestModel.js";
 import Portfolio from "../models/portfolioModel.js";
 import Ticket from "../models/ticketModel.js";
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,7 +37,7 @@ export const createPortfolio = async (req, res) => {
         });
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation failed", details: error.message });
     }
 };
@@ -91,7 +91,7 @@ export const getPortfolio = async(req, res) => {
         });
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 }
@@ -152,7 +152,7 @@ export const getPortfolioHold = async (req, res) => {
             // });
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 };
@@ -208,7 +208,7 @@ export const updatePortfolioSell = async (req, res) => {
         });
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Portfolio creation fail", details: error.message });
     }
 };

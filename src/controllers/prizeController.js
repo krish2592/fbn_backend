@@ -1,5 +1,5 @@
 import Prize from "../models/prizeModel.js";
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -69,7 +69,7 @@ export const getPrizeDistribution = async (req, res) => {
         return res.send({ status: "success",message:"distribution data fetched success!",  data: response, aggregateData: agrregateResponse })
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         console.error("Prize distribution fetch failed:", error);
     }
 

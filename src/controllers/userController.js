@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import { v4 as uuidv4 } from "uuid";
 import jwt from 'jsonwebtoken';
-import logger from "../logger.js";
+// import logger from "../logger.js";
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -78,7 +78,7 @@ class UserController {
       }
 
     } catch (error) {
-      logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+      console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -120,7 +120,7 @@ class UserController {
         data: resPayload
       });
     } catch (error) {
-      logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+      console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -141,7 +141,7 @@ class UserController {
 
     jwt.verify(refreshToken, process.env.REFRESH_SECRET_KEY, async (err, decoded) => {
 
-      logger.error(`${moduleName}: Error: ${err}`);
+      console.log(`${moduleName}: Error: ${err}`);
 
       if (err) return res.status(403).json({ message: "Invalid refresh token" });
 
@@ -178,7 +178,7 @@ class UserController {
         message: "Update User Succeess",
       });
     } catch (error) {
-      logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+      console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -201,7 +201,7 @@ class UserController {
         message: "Update User Succeess",
       });
     } catch (error) {
-      logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+      console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -221,7 +221,7 @@ class UserController {
         message: "Update User Succeess",
       });
     } catch (error) {
-       logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+       console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -268,7 +268,7 @@ class UserController {
         message: "Update User Succeess",
       });
     } catch (error) {
-      logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+      console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -292,7 +292,7 @@ class UserController {
 
       return res.status(200).json({ message: "User updated", user: updatedUser });
     } catch (error) {
-       logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+       console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }
@@ -309,7 +309,7 @@ class UserController {
 
       return res.status(200).json({ message: "User deleted" });
     } catch (error) {
-      logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+      console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
       return res.status(500).json({ message: "Server error", error });
     }
   }

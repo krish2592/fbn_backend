@@ -1,5 +1,5 @@
 import Contest from "../models/contestModel.js"
-import logger from "../logger.js";
+// import logger from "../logger.js";
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -144,13 +144,13 @@ export const createContest = async (req, res) => {
 
 export const getAllContest = async(req, res) => {
     try{
-        logger.info(`${moduleName}: Get all contest started`);
+        console.log(`${moduleName}: Get all contest started`);
         const result = await Contest.find({isDeleted:false})
         .sort({ totalQuantity: 1 }) 
         .select({_id:0, createdAt:0, updatedAt:0, __v:0, isDeleted:0})
         res.send({success: true, message:"Contest data fetched sucess", data:result})
     } catch(error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         console.error("Finding Contest Error: ", error);
     }
 }

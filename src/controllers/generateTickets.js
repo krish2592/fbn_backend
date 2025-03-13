@@ -2,7 +2,7 @@ import "dotenv/config";
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { createId } from '@paralleldrive/cuid2';
-import logger from "../logger.js";
+// import logger from "../logger.js";
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,7 +26,7 @@ function verifyTicket(ticketId) {
     const parts = ticketId.split('-');
 
     if (parts.length !== 3) {
-        logger.error(`${moduleName}: Invalid ticket format`);
+        console.log(`${moduleName}: Invalid ticket format`);
         return false;
     }
 
@@ -36,10 +36,10 @@ function verifyTicket(ticketId) {
 
     const recalculatedHmac = crypto.createHmac('sha256', SECRET_KEY).update(baseString).digest('hex');
     if (recalculatedHmac.substring(0, 11).toUpperCase() === providedHmacPart) {
-        logger.info(`${moduleName}: Ticket verification successful`);
+        console.log(`${moduleName}: Ticket verification successful`);
         return true;
     } else {
-        logger.error(`${moduleName}: Ticket verification failed`);
+        console.log(`${moduleName}: Ticket verification failed`);
         return false;
     }
 }

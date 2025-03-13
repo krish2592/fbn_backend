@@ -4,7 +4,7 @@ import Ticket from "../models/ticketModel.js";
 import User from "../models/userModel.js";
 import Transfer from "../models/transferModel.js";
 import Upgrade from "../models/upgradeModel.js";
-import logger from "../logger.js";
+// import logger from "../logger.js";
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -50,7 +50,7 @@ export const createTicket = async (req, res) => {
         const result = await Ticket.insertMany(reqPayload)
         // console.log("Bulk insert successful:", result);
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket Generation Error:", details: error.message });
     }
 
@@ -73,7 +73,7 @@ export const getMyContest = async (req, res) => {
         res.send({ success: true, message: "Contest Ticket Fetched Success!", data: result })
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Finding Contest Error:", details: error.message });
     }
 }
@@ -117,7 +117,7 @@ export const updateTicket = async (req, res) => {
 
         res.json(resPayload);
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         res.status(500).json({ error: "Update failed", details: error.message });
     }
 };
@@ -177,7 +177,7 @@ export const upgradeTicket = async (req, res) => {
         return res.status(200).send({ success: true, message: "upgrade success!", data: ticketId });
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket upgradation failed!", details: error.message });
     }
 };
@@ -243,7 +243,7 @@ export const transferTicket = async (req, res) => {
         return res.status(200).send({ success: true, message: "transfer success!", data: ticketId });
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket transfer failed!", details: error.message });
     }
 };
@@ -290,7 +290,7 @@ export const searchTicket = async (req, res) => {
             return res.status(200).send({ success: true, message: "fetched success!", data: getTicket });
         }
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Searching Ticket failed", details: error.message });
     }
 }
@@ -313,7 +313,7 @@ export const activateTicket = async (req, res) => {
 
         return res.status(200).json({ success: true, message: "Ticket activated successfully!", id: updateTicket.ticketId });
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket activation failed", details: error.message });
     }
 
@@ -336,7 +336,7 @@ export const deactivateTicket = async (req, res) => {
 
         return res.status(200).json({ success: true, message: "Ticket deactivated successfully!", id: updateTicket.ticketId });
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket deactivation failed", details: error.message });
     }
 }

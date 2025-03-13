@@ -6,7 +6,7 @@ const app = express();
 import mongoose from 'mongoose';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
-import logger from "./logger.js";
+// import logger from "./logger.js";
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -78,7 +78,7 @@ mongoose.connect(process.env.CONNECTION_STRING, {
   // serverSelectionTimeoutMS: 30000
 })
   .then(() => {
-    logger.info(`${moduleName}: Database is connected`);
+    console.log(`${moduleName}: Database is connected`);
     // watchDatabase();
   }
   )
@@ -106,5 +106,5 @@ mongoose.connect(process.env.CONNECTION_STRING, {
 app.use('/', route);
 
 app.listen(process.env.PORT || 3000, function () {
-  logger.info(`${moduleName}: Express app running on port:`+ (process.env.PORT || 3000));
+  console.log(`${moduleName}: Express app running on port:`+ (process.env.PORT || 3000));
 });

@@ -1,5 +1,5 @@
 import Support from "../models/supportModel.js";
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,7 +26,7 @@ export const createSupportTicket = async (req, res) => {
             messaage: "Ticket created success"
         })
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }
@@ -56,7 +56,7 @@ export const getUserTickets = async (req, res) => {
             data: getAllTickets
         })
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }
@@ -89,7 +89,7 @@ export const addMessageUser = async (req, res) => {
             message: "Message Added Success"
         })
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }
@@ -124,7 +124,7 @@ export const addMessageSupport = async (req, res) => {
             message: "Message Added Success"
         })
     } catch (error) {
-         logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({ status: false, message: error.message, error: error })
     }
 }

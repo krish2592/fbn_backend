@@ -1,6 +1,6 @@
 import Payment from '../models/paymentModel.js';
 import Contest from '../models/contestModel.js';
-import logger from '../logger.js';
+// import logger from '../logger.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +32,7 @@ export const savePayment = async (req, res) => {
         const resp = await payment.save(payment);
 
         if (!resp) {
-            logger.info(`${moduleName}: Message: Payment save failed`);
+            console.log(`${moduleName}: Message: Payment save failed`);
             return res.status(400).send({
                 success: "false",
                 message: "Payment save failed",
@@ -43,7 +43,7 @@ export const savePayment = async (req, res) => {
         const getContest = await Contest.findOne({ contestName: contestName, isDeleted: false })
 
         if(!getContest) {
-            logger.info(`${moduleName}: Message: Contest not found!`);
+            console.log(`${moduleName}: Message: Contest not found!`);
             return res.status(404).send({
                 success: "false",
                 message: "Contest not found!",
@@ -64,7 +64,7 @@ export const savePayment = async (req, res) => {
         )
 
         if(!updateQuantitySold) {
-            logger.info(`${moduleName}: Message: quantity not updated!`);
+            console.log(`${moduleName}: Message: quantity not updated!`);
             return res.status(400).send({
                 success: "false",
                 message: "quantity not updated!",
@@ -82,7 +82,7 @@ export const savePayment = async (req, res) => {
         })
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({
             message: error.message,
             success: false,
@@ -134,7 +134,7 @@ export const savePaymentBuy = async (req, res) => {
         })
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({
             message: error.message,
             success: false,
@@ -186,7 +186,7 @@ export const savePaymentSell = async (req, res) => {
         })
 
     } catch (error) {
-        logger.error(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).send({
             message: error.message,
             success: false,
