@@ -57,6 +57,14 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.setTimeout(30000, () => { // 30 seconds
+    console.log("Request timed out.");
+    res.status(408).send("Request Timeout");
+  });
+  next();
+});
+
 app.set('trust proxy', 1);
 
 const limiter = rateLimit({
