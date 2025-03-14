@@ -311,7 +311,12 @@ export const activateTicket = async (req, res) => {
             return res.status(400).json({ success: false, message: "No ticket found!", id: null });
         }
 
-        return res.status(200).json({ success: true, message: "Ticket activated successfully!", id: updateTicket.ticketId });
+        return res.status(200).json({ 
+            success: true, 
+            message: "Ticket activated successfully!", 
+            isActiveBuy: updateTicket.isActiveBuy, 
+            isActiveSell: updateTicket.isActiveSell
+        });
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket activation failed", details: error.message });
@@ -334,7 +339,12 @@ export const deactivateTicket = async (req, res) => {
             return res.status(400).json({ success: false, message: "No ticket found!", id: null });
         }
 
-        return res.status(200).json({ success: true, message: "Ticket deactivated successfully!", id: updateTicket.ticketId });
+        return res.status(200).json({ 
+            success: true, 
+            message: "Ticket deactivated successfully!", 
+            isActiveBuy: updateTicket.isActiveBuy, 
+            isActiveSell: updateTicket.isActiveSell 
+        });
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Ticket deactivation failed", details: error.message });
