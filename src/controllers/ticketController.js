@@ -314,8 +314,7 @@ export const activateTicket = async (req, res) => {
         return res.status(200).json({ 
             success: true, 
             message: "Ticket activated successfully!", 
-            isActiveBuy: updateTicket.isActiveBuy, 
-            isActiveSell: updateTicket.isActiveSell
+            onSell: updateTicket.onSell 
         });
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
@@ -342,8 +341,7 @@ export const deactivateTicket = async (req, res) => {
         return res.status(200).json({ 
             success: true, 
             message: "Ticket deactivated successfully!", 
-            isActiveBuy: updateTicket.isActiveBuy, 
-            isActiveSell: updateTicket.isActiveSell 
+            onSell: updateTicket.onSell 
         });
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
