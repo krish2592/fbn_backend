@@ -12,7 +12,7 @@ export const auth = async (req, res, next) => {
     console.log(`${moduleName}: Authentication started`);
 
     const token = req.headers["authorization"]?.split(" ")[1] || req.headers["Authorization"]?.split(" ")[1];
-
+    console.log(token)
     if (!token) {
         console.log(`${moduleName}: Access denied`);
         return res.status(401).json({ message: 'Access denied.' });

@@ -28,6 +28,8 @@ export const savePayment = async (req, res) => {
             description
         }
         )
+        
+        console.log("payment-request", payment)
 
         const resp = await payment.save(payment);
         console.log("payment-response", resp)
