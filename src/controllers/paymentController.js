@@ -84,7 +84,8 @@ export const savePayment = async (req, res) => {
         };
        
         console.log(respPayload)
-        return res.status(200).send(respPayload)
+        res.status(200).send(respPayload)
+        console.log("Response sent to client"); 
 
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
