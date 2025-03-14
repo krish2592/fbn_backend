@@ -34,7 +34,7 @@ export const savePayment = async (req, res) => {
         if (!resp) {
             console.log(`${moduleName}: Message: Payment save failed`);
             return res.status(400).send({
-                success: "false",
+                success: false,
                 message: "Payment save failed",
                 data: null
             })
@@ -76,7 +76,7 @@ export const savePayment = async (req, res) => {
             success: true,
             message: "Payment saved successfully",
             data: {
-                id: resp._id,
+                id: resp._id.toString(),
                 amount: resp.amount
             }
         };
