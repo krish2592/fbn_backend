@@ -58,7 +58,7 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.setTimeout(2, () => { // 30 seconds
+  res.setTimeout(30000, () => { // 30 seconds
     console.log("Request timed out.");
     res.status(408).send("Request Timeout");
   });
