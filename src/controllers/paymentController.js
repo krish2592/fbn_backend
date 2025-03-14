@@ -40,37 +40,37 @@ export const savePayment = async (req, res) => {
             })
         }
 
-        // const getContest = await Contest.findOne({ contestName: contestName, isDeleted: false })
+        const getContest = await Contest.findOne({ contestName: contestName, isDeleted: false })
 
-        // if(!getContest) {
-        //     console.log(`${moduleName}: Message: Contest not found!`);
-        //     return res.status(404).send({
-        //         success: "false",
-        //         message: "Contest not found!",
-        //         data: null
-        //     })
-        // }
+        if(!getContest) {
+            console.log(`${moduleName}: Message: Contest not found!`);
+            return res.status(404).send({
+                success: false,
+                message: "Contest not found!",
+                data: null
+            })
+        }
 
-        // const newQuantitySold = Number(getContest.quantitySold) + Number(quantity);
+        const newQuantitySold = Number(getContest.quantitySold) + Number(quantity);
 
-        // const updateQuantitySold = await Contest.updateOne(
-        //     { contestName: contestName, isDeleted: false },
-        //     {
-        //         $set: {
-        //             quantitySold: newQuantitySold,
-        //         }
-        //     },
-        //     { new: true }
-        // )
+        const updateQuantitySold = await Contest.updateOne(
+            { contestName: contestName, isDeleted: false },
+            {
+                $set: {
+                    quantitySold: newQuantitySold,
+                }
+            },
+            { new: true }
+        )
 
-        // if(!updateQuantitySold) {
-        //     console.log(`${moduleName}: Message: quantity not updated!`);
-        //     return res.status(400).send({
-        //         success: "false",
-        //         message: "quantity not updated!",
-        //         data: null
-        //     })
-        // }
+        if(!updateQuantitySold) {
+            console.log(`${moduleName}: Message: quantity not updated!`);
+            return res.status(400).send({
+                success: false,
+                message: "quantity not updated!",
+                data: null
+            })
+        }
 
         const respPayload = {
             success: true,
