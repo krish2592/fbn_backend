@@ -72,7 +72,7 @@ export const savePayment = async (req, res) => {
             })
         }
 
-        res.send({
+        return res.status(200).send({
             success: "success",
             message: "Payment saved successfully",
             data: {
