@@ -154,7 +154,6 @@ export const upgradeTicket = async (req, res) => {
         }
 
       
-
         const upgradeTicket = await Ticket.findOneAndUpdate(
             { ticketId: ticketId, isDeleted: false, onSell: false },
             {
