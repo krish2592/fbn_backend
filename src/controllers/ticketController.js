@@ -335,7 +335,11 @@ export const activateTicket = async (req, res) => {
             return res.status(400).json({ success: false, message: "Search query is required!", id: null });
         }
 
-        const updateTicket = await Ticket.updateOne({ ticketId: query.trim() }, { onSell: true }).select({ ticketId: 1 })
+        const updateTicket = await Ticket.findOneAndUpdate(
+            { ticketId: query.trim() }, 
+            { onSell: true }, 
+            { returnDocument: "after" })
+            .select({ ticketId: 1, onSell:1 })
 
         if (!updateTicket) {
             return res.status(400).json({ success: false, message: "No ticket found!", id: null });
@@ -362,7 +366,11 @@ export const deactivateTicket = async (req, res) => {
             return res.status(400).json({ success: false, message: "Search query is required!", id: null });
         }
 
-        const updateTicket = await Ticket.updateOne({ ticketId: query.trim() }, { onSell: false }).select({ ticketId: 1 })
+        const updateTicket = await Ticket.findOneAndUpdate(
+            { ticketId: query.trim() }, 
+            { onSell: false }, 
+            { returnDocument: "after" } )
+             .select({ ticketId: 1, onSell:1 })
 
         if (!updateTicket) {
             return res.status(400).json({ success: false, message: "No ticket found!", id: null });
