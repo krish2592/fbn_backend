@@ -153,6 +153,8 @@ export const upgradeTicket = async (req, res) => {
             return res.status(400).send({ success: false, message: "Transfer is not created!", id: null });
         }
 
+      
+
         const upgradeTicket = await Ticket.findOneAndUpdate(
             { ticketId: ticketId, isDeleted: false, onSell: false },
             {
@@ -160,7 +162,7 @@ export const upgradeTicket = async (req, res) => {
                     userId: userId,
                     paymentId: razorpayPaymentId,
                     salePrice: pricePerQuantity,
-                    resalePrice: 2 * pricePerQuantity,
+                    resalePrice: "NA",   // resalePrice: 2 * pricePerQuantity,
                     poolPrize: poolPrize,
                     isActiveBuy: isActiveBuy,
                     isActiveSell: isActiveSell,
