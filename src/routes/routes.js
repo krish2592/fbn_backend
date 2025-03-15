@@ -2,7 +2,7 @@ import express from 'express';
 const router = express();
 import UserController from "../controllers/userController.js";
 import { savePayment, savePaymentBuy, savePaymentSell } from "../controllers/paymentController.js";
-import { createTicket, getMyContest, updateTicket, transferTicket, searchTicket, activateTicket, deactivateTicket, upgradeTicket } from "../controllers/ticketController.js";
+import { createTicket, getMyContest, updateTicket, transferTicket, searchTicket, activateTicket, deactivateTicket, upgradeTicket, getTicket } from "../controllers/ticketController.js";
 import { createContest, getAllContest } from '../controllers/contestController.js';
 import { createPortfolio, getPortfolio, getPortfolioHold, updatePortfolioSell } from '../controllers/portfolioController.js';
 import { getPrizeDistribution } from '../controllers/prizeController.js';
@@ -43,6 +43,7 @@ router.post('/transfer-ticket', auth, authorize, transferTicket)
 router.post('/activate-ticket', auth, authorize, activateTicket)
 router.post('/deactivate-ticket', auth, authorize, deactivateTicket)
 router.get('/search-ticket', auth, searchTicket)
+router.get('/get-ticket', auth, getTicket)
 
 
 /************************ Portfolio ********************************/

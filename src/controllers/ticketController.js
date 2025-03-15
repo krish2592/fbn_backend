@@ -297,6 +297,35 @@ export const searchTicket = async (req, res) => {
 }
 
 
+export const getTicket = async (req, res) => {
+
+    try {
+
+        const query = req.query.query;
+
+        if (!query) {
+           console.log(`${moduleName}: No query found`);
+            return res.status(400).send({ success: false, message: "Please enter email or ticket id", data: [] });
+        }
+    
+        const getTickets = await Ticket.findOne({ ticketId: query.trim(), isDeleted: false })
+            .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
+
+        if (!getTickets) {
+               console.log(`${moduleName}: No tickets found`);
+                return res.status(400).send({ success: false, message: "No ticket found", data: null });
+        }
+
+           return res.status(200).send({ success: true, message: "fetched success!", data: getTickets });
+
+        }  catch (error) {
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).json({ error: "Fetching Ticket failed", details: error.message });
+    }
+}
+
+
+
 export const activateTicket = async (req, res) => {
 
     try {
