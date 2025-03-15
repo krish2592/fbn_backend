@@ -227,7 +227,7 @@ export const transferTicket = async (req, res) => {
                     userId: userId,
                     paymentId: razorpayPaymentId,
                     salePrice: pricePerQuantity,
-                    resalePrice: 2 * pricePerQuantity,
+                    resalePrice: "NA",
                     poolPrize: poolPrize,
                     isActiveBuy: isActiveBuy,
                     isActiveSell: isActiveSell,
