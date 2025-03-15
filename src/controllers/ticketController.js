@@ -316,7 +316,7 @@ export const getTicket = async (req, res) => {
                 return res.status(400).send({ success: false, message: "No ticket found", data: null });
         }
 
-           return res.status(200).send({ success: true, message: "fetched success!", data: getTickets });
+           return res.status(200).send({ success: true, message: "fetched success!", onSell: getTickets.onSell });
 
         }  catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
