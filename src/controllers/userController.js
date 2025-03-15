@@ -128,13 +128,13 @@ class UserController {
 
   static async refreshToken(req, res) {
 
-    logger.info(`${moduleName}: Refreshing token started`);
+    console.log(`${moduleName}: Refreshing token started`);
 
     const { refreshToken } = req.body
 
     if (!refreshToken) {
 
-      logger.info(`${moduleName}: No refresh token provided`);
+      console.log(`${moduleName}: No refresh token provided`);
 
       return res.status(403).json({ message: "No refresh token provided" });
     }
