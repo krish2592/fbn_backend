@@ -95,7 +95,7 @@ export const updateTicket = async (req, res) => {
                 $set: {
                     paymentId: razorpayPaymentId,
                     salePrice: pricePerQuantity,
-                    resalePrice: pricePerQuantity,
+                    resalePrice: "NA",
                     poolPrize: poolPrize,
                     isActiveBuy: isActiveBuy,
                     isActiveSell: isActiveSell
