@@ -11,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const moduleName = __filename;
 
 export const createTicket = async (req, res) => {
-    console.log(">>>>>>>>>>>>>>>>>>",req.body)
+    console.log(">>>>>>>>>>>>>>>>>>", req.body)
     const {
         userId,
         razorpayPaymentId,
@@ -153,7 +153,7 @@ export const upgradeTicket = async (req, res) => {
             return res.status(400).send({ success: false, message: "Transfer is not created!", id: null });
         }
 
-      
+
         const upgradeTicket = await Ticket.findOneAndUpdate(
             { ticketId: ticketId, isDeleted: false, onSell: false },
             {
@@ -257,7 +257,7 @@ export const searchTicket = async (req, res) => {
         const query = req.query.query;
 
         if (!query) {
-           console.log(`${moduleName}: No query found`);
+            console.log(`${moduleName}: No query found`);
             return res.status(400).send({ success: false, message: "Please enter email or ticket id", data: [] });
         }
 
@@ -265,7 +265,7 @@ export const searchTicket = async (req, res) => {
             const getUser = await User.findOne({ email: query.trim().toLowerCase(), isDeleted: false }).select({ userId: 1 })
 
             if (!getUser) {
-               console.log(`${moduleName}: User not found`);
+                console.log(`${moduleName}: User not found`);
                 return res.status(404).send({ success: false, message: "User does not exist!", data: [] });
             }
 
@@ -273,7 +273,7 @@ export const searchTicket = async (req, res) => {
                 .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
 
             if (getTickets.length == 0) {
-               console.log(`${moduleName}: No tickets to sell`);
+                console.log(`${moduleName}: No tickets to sell`);
                 return res.status(400).send({ success: false, message: "No tickets to sell", data: null });
             }
 
@@ -284,7 +284,7 @@ export const searchTicket = async (req, res) => {
                 .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
 
             if (getTicket.length == 0) {
-               console.log(`${moduleName}: Items not found!`);
+                console.log(`${moduleName}: Items not found!`);
                 return res.status(404).send({ success: false, message: "Items not found!", data: [] });
             }
 
@@ -304,21 +304,21 @@ export const getTicket = async (req, res) => {
         const query = req.query.query;
 
         if (!query) {
-           console.log(`${moduleName}: No query found`);
+            console.log(`${moduleName}: No query found`);
             return res.status(400).send({ success: false, message: "Please enter email or ticket id", data: [] });
         }
-    
+
         const getTickets = await Ticket.findOne({ ticketId: query.trim(), isDeleted: false })
             .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
 
         if (!getTickets) {
-               console.log(`${moduleName}: No tickets found`);
-                return res.status(400).send({ success: false, message: "No ticket found", data: null });
+            console.log(`${moduleName}: No tickets found`);
+            return res.status(400).send({ success: false, message: "No ticket found", data: null });
         }
 
-           return res.status(200).send({ success: true, message: "fetched success!", onSell: getTickets.onSell });
+        return res.status(200).send({ success: true, message: "fetched success!", onSell: getTickets.onSell });
 
-        }  catch (error) {
+    } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
         return res.status(500).json({ error: "Fetching Ticket failed", details: error.message });
     }
@@ -336,19 +336,19 @@ export const activateTicket = async (req, res) => {
         }
 
         const updateTicket = await Ticket.findOneAndUpdate(
-            { ticketId: query.trim() }, 
-            { onSell: true }, 
+            { ticketId: query.trim() },
+            { onSell: true },
             { returnDocument: "after" })
-            .select({ ticketId: 1, onSell:1 })
+            .select({ ticketId: 1, onSell: 1 })
 
         if (!updateTicket) {
             return res.status(400).json({ success: false, message: "No ticket found!", id: null });
         }
 
-        return res.status(200).json({ 
-            success: true, 
-            message: "Ticket activated successfully!", 
-            onSell: updateTicket.onSell 
+        return res.status(200).json({
+            success: true,
+            message: "Ticket activated successfully!",
+            onSell: updateTicket.onSell
         });
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
@@ -367,19 +367,19 @@ export const deactivateTicket = async (req, res) => {
         }
 
         const updateTicket = await Ticket.findOneAndUpdate(
-            { ticketId: query.trim() }, 
-            { onSell: false }, 
-            { returnDocument: "after" } )
-             .select({ ticketId: 1, onSell:1 })
+            { ticketId: query.trim() },
+            { onSell: false },
+            { returnDocument: "after" })
+            .select({ ticketId: 1, onSell: 1 })
 
         if (!updateTicket) {
             return res.status(400).json({ success: false, message: "No ticket found!", id: null });
         }
 
-        return res.status(200).json({ 
-            success: true, 
-            message: "Ticket deactivated successfully!", 
-            onSell: updateTicket.onSell 
+        return res.status(200).json({
+            success: true,
+            message: "Ticket deactivated successfully!",
+            onSell: updateTicket.onSell
         });
     } catch (error) {
         console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
@@ -387,10 +387,61 @@ export const deactivateTicket = async (req, res) => {
     }
 }
 
+export const getAllTicketByContestName = async (req, res) => {
+    try {
+
+        console.log("hhhh", req.body);
+        const { id, contestId } = req.body;
+
+
+        if (!id && !contestId) {
+            console.log(`${moduleName}: contest not found`);
+            return res.status(400).send({ success: false, message: "Please select contest", data: [] });
+        }
+
+        const getTickets = await Ticket.find({ userId: id.trim(), contestName: contestId.trim(), isDeleted: false })
+            .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
+
+        console.log(getTickets)
+        if (!getTickets.length) {
+            console.log(`${moduleName}: No contest ticket found`);
+            return res.status(200).send({ success: true, message: "No contest ticket found", data: [{ ticketId: "No Ticket" }] });
+        }
+
+        return res.status(200).send({ success: true, message: "fetched contest ticket success!", data: getTickets });
+
+    } catch (error) {
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).json({ error: "Fetching contest failed", details: error.message });
+    }
+}
 
 
 
+export const validateTicket = async (req, res) => {
+    try {
 
+        const { ticketId, contestId } = req.body;
+
+        if (!ticketId && !contestId) {
+            return res.status(400).send({ success: false, message: "ticketId and contestId both are required", isValid: false });
+        }
+
+        const getTickets = await Ticket.findOne({ ticketId: ticketId.trim(), contestName: contestId.trim(), isDeleted: false })
+            .select({ _id: 0, paymentId: 0, isDeleted: 0, updatedAt: 0, __v: 0 })
+
+        if (!getTickets) {
+            console.log(`${moduleName}: No contest ticket found`);
+            return res.status(400).send({ success: false, message: "No contest ticket found", isValid: false });
+        }
+
+        return res.status(200).send({ success: true, message: "fetched contest ticket success!", isValid: true });
+
+    } catch (error) {
+        console.log(`${moduleName}: Error: ${error} Message: ${error.message}`);
+        return res.status(500).json({ error: "Validating contest failed", details: error.message });
+    }
+}
 
 
 

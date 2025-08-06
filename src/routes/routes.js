@@ -2,7 +2,13 @@ import express from 'express';
 const router = express();
 import UserController from "../controllers/userController.js";
 import { savePayment, savePaymentBuy, savePaymentSell } from "../controllers/paymentController.js";
-import { createTicket, getMyContest, updateTicket, transferTicket, searchTicket, activateTicket, deactivateTicket, upgradeTicket, getTicket } from "../controllers/ticketController.js";
+import {
+    createTicket, getMyContest, updateTicket,
+    transferTicket, searchTicket, activateTicket,
+    deactivateTicket, upgradeTicket, getTicket,
+    getAllTicketByContestName,
+    validateTicket,
+} from "../controllers/ticketController.js";
 import { createContest, getAllContest } from '../controllers/contestController.js';
 import { createPortfolio, getPortfolio, getPortfolioHold, updatePortfolioSell } from '../controllers/portfolioController.js';
 import { getPrizeDistribution } from '../controllers/prizeController.js';
@@ -10,7 +16,9 @@ import { getPrizeDistribution } from '../controllers/prizeController.js';
 import { auth, authorize } from "../controllers/auth/auth.js"
 
 import { createSupportTicket, getUserTickets, addMessageUser } from "../controllers/supportController.js"
+import { createContestPaper, getContestPaper } from '../controllers/contestPaperController.js';
 
+import { getUserPaperResponse, saveUserPaperResponse, submitUserPaperResponse } from '../controllers/userResponseController.js';
 
 /************************ User api **********************************/
 router.post('/create-user', UserController.registerOrLogin)
@@ -27,6 +35,14 @@ router.post('/update-dob', auth, authorize, UserController.updateUserDOB)
 router.post('/create-contest', createContest)
 router.get('/get-all-contest', auth, getAllContest)
 
+/************************ Contest Paper ***********************************/
+router.post('/create-contest-paper', auth, createContestPaper)
+router.get('/get-contest-paper', auth, getContestPaper)
+
+/************************* User Response ***************************/
+router.post('/save-user-paper-response', auth, authorize, saveUserPaperResponse)
+router.post('/submit-user-paper-response', auth, authorize, submitUserPaperResponse)
+router.get('/get-user-paper-response', auth, authorize, getUserPaperResponse)
 
 /************************ Payment **********************************/
 router.post('/save-payment', auth, authorize, savePayment)
@@ -44,6 +60,8 @@ router.post('/activate-ticket', auth, authorize, activateTicket)
 router.post('/deactivate-ticket', auth, authorize, deactivateTicket)
 router.get('/search-ticket', auth, searchTicket)
 router.get('/get-ticket', auth, getTicket)
+router.post('/get-all-ticket-by-contest', auth, authorize, getAllTicketByContestName)
+router.post('/validate-ticket', auth, validateTicket)
 
 
 /************************ Portfolio ********************************/
